@@ -1,0 +1,133 @@
+2.02.00
+-------
+Added UNIX fingerprint
+
+2.01.02
+-------
+Changed FRTH to work like modified specs
+
+2.01.01
+-------
+Fixed off by 1 error in y month
+
+2.01.00
+-------
+Added IPMD fingerprint
+
+2.00
+----
+Restructured underlying Rc/Funge engine
+All accesses to funge-space now use the storage offset
+Fixed memory mode has been removed, only dynamic mode remains
+-md and -mf are no longer relevant and have been removed
+Changed y functionality to default to spec -Y uses rcs version of y
+Fixed wrap-around function to work correctly for lahey-space
+Fixed bug in BASE N command
+Fixed bug in TOYS Z command when running in Befunge mode
+Fixed bug in BASE I command
+Fixed placement bugs in TERM
+Fixed TRDS to work correctly
+Fixed buffering for & and ~
+Fixed y so that interpreter command line arguments are not included
+Change FING to allow reflects to be popped from empty semantic stacks
+Added -f2 to allow dynamic FM to run in BeFunge mode
+Added sandbox mode, command line option -sb
+Added Funge/Multiverse
+Added Object/Funge
+Added fingerprint ARRY
+Added fingerprint BOOL
+Added fingerprint FOBJ
+Added fingerprint FORK
+Added fingerprint FPRT
+Added fingerprint ICAL
+Added fingerprint IMTH
+Added fingerprint MVRS
+Added fingerprint NCRS
+Added fingerprint RAND
+Added fingerprint SGNE
+Added fingerprint SGNL
+Added fingerprint SORT
+
+1.20
+----
+Fixed bug in ;blocks;
+Fixed bug in file loader for bytes greater than 127
+Fixed several bugs in DATE
+Fixed funge-space access to always use storage offset
+Addes A and O to SUBR
+
+1.19
+----
+Fixed error in translation matrix code of 3DSP
+
+1.18
+----
+Fixed several bugs in the 3d vector functions and 3DSP
+
+1.17
+----
+Fixed bug in y command when using as pick
+
+1.16
+----
+Fixed bug in G command in EMEM
+Fixed bug in D command in STCK
+Fixed bug in K command in STCK
+Fixed bug in G command in STCK
+
+1.15
+----
+Fixed intermittant bug in @
+Fixed bug in B command in EXEC
+Fixed bug in G command in EXEC
+Fixed but in Y command in FING
+Changed vector ordering  in INDV
+Added missing D command to FILE
+
+1.14
+----
+Added samples back into distribution
+Fingerprint DATE added
+
+1.13
+----
+Hardcoded limit on number of IPs has been removed
+Additional macro commands were added to MACR
+
+1.12
+----
+Fingerprint SMEM added
+Fingerprint SMPH added
+
+1.11
+----
+Implemented new Dynamic mode memory manager wich is MUCH faster
+Default mode is now Dynamic instead of fixed
+Dynamic memory grows as needed.
+-c and -r are now irrelevant and have been removed
+Fixed wrap around bug in all 3 dimensions
+Fixed bug in TOYS G command
+Fingerprint MSGQ added
+Fingerprint REXP added
+
+1.10
+-----
+Error conditions in STRN now reflect
+Fingerprint EMEM added
+Fingerprint EXEC added
+Fingerprint FING added
+Fingerprint LONG added
+Fingerprint MACR added
+Fingerprint STCK added
+Fingerprint SETS added
+Fingerprint TRGR added
+Fingerprint JSTR added
+
+
+1.09
+-----
+Lots of bug fixes, now passes Mycology 100%
+Added -h command
+Added help command to debugger
+Changed to dynamicly allocated stack.
+

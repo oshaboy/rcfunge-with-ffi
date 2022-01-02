@@ -1,0 +1,1937 @@
+RC/Funge-98 v2.00
+Description:
+------------
+  RC/Funge-98 is a funge interpreter based upon the Funge-98 specification
+by Cats-Eye Technologies.  The full language specification (including the
+'i', 'o', '=', and 't' commands) are supported.  Unefunge, befunge, and trefunge
+all supported by RC/Funge-98, with befunge being the default mode.  Several
+extensions are also provided, including minimal windows support (currently
+only on unix version).
+
+Features:
+---------
+    * Funge-98 and Funge-93 modes
+    * Supports Unefunge, Befunge, and Trefunge
+    * Concurrent Funge, 't' command is implemented
+    * 'i', 'o', and '=' commands implemented
+    * Can map funge space to screen, with command tracing
+    * Full command tracing with stack output
+    * Fixed memory model for speed
+    * Dynamic memory model for large dimensions
+    * Mini-Funge for user definable A-Z functions
+    * Integrated debugger
+    * Full source code (in C) included
+    * Support for multiverse funge
+    * Support for object oriented funge
+    * Passes original Cat's Eye diagnostic suite
+    * Passes Mycology diagnostic suite 
+
+Multiverse Funge:
+-----------------
+Rc/Funge-98 V2 extends the capabilities of the funge system.  The V1
+interpreter could only run a single Funge universe at a time.  V2 now
+supports the ability to have multiple funge programs all running in
+independent universes, or a multiverse.  A new fingerprint MVRS allows
+data transfer between universes as well as the ability for an IP to
+actually travel to another universe.
+
+A new command line option -vm allows the definition of additional
+virtual machines at program startup.  Each time -vm is encountered a
+new virtual machine is created, all options following the -vm will
+apply to the newly created VM, this allows for each VM to be truly
+unique.  It is possible for one VM to be running a Befunge program 
+while another VM is running a Unefunge or Trefunge program.  It is
+also possible for one VM to be running Funge/98 while another VM
+is running Funge/93 or Funge/108.
+
+The B command of MVRS allows for the creation of independent universes
+under program control.  Universes created with the B command can be
+just as unique as universes created from the command line.
+
+Handprint:
+-----------
+  RCS Funge interpreters can be identified with the following handprints:
+      "RCSU" 0x52425355 Unix version
+
+Built-in Fingerprints:
+----------------------
+      "3DSP" 0x33445350 3D space manipulation extension    (RCS)
+      "ARRY" 0x41525259 Arrays                             (RCS)
+      "BASE" 0x42415345 I/O for numbers in other bases     (RCS)
+      "BOOL" 0x424F4F4C Logic functions                    (RCS)
+      "CPLI" 0x43504C49 Complex Integer extension          (RCS)
+      "DATE" 0x44415445 Date functions                     (RCS)
+      "DIRF" 0x44495246 Directory functions extension      (RCS)
+      "EMEM" 0x454d454d Extended memory                    (RCS)
+      "EVAR" 0x45564152 Environment variables extension    (RCS)
+      "EXEC" 0x45584543 Various types of k-like execs      (RCS)
+      "FILE" 0x46494C45 File I/O functions                 (RCS)
+      "FING" 0x46494e47 Alter single fingerprint semantics (RCS)
+      "FNGR" 0x464E4752 Fingerprint management extension   (RCS)
+      "FOBJ" 0x464f424a Object Oriented extension          (RCS)
+      "FPDP" 0x46504450 Double precision floating point    (RCS)
+      "FPRT" 0x46505254 Formatted print                    (RCS)
+      "FPSP" 0x46505350 Single precision floating point    (RCS)
+      "FRTH" 0x46525448 Some common forth commands         (RCS)
+      "FIXP" 0x46495850 Some useful math functions         (RCS)
+      "FORK" 0x464F524B Process fork                       (RCS)
+      "HRTI" 0x48525449 High resolution timer interface    (Cats-Eye)
+      "ICAL" 0x4943414c Some Intercal-like functions       (RCS)
+      "IIPC" 0x49495043 Inter IP communicaiton extension   (RCS)
+      "IMAP" 0x494D4150 Instruction remap extension        (RCS)
+      "IMTH" 0x494d5448 Some integer math functions        (RCS)
+      "INDV" 0x494E4456 Pointer functions                  (RCS)
+      "IPMD" 0x49504d44 IP dimension modes                 (RCS)
+      "JSTR" 0x4a535452 3d P and G for STRN                (Jesse Van Herk)
+      "LONG" 0x4c4f4e47 Long integers                      (RCS)
+      "MACR" 0x4d414352 Macro extension                    (RCS)
+      "MODE" 0x4D4F4445 Standard modes                     (Cats-Eye)
+      "MODU" 0x4D4F4455 Modulo Arithmetic Extension        (Cats-Eye)
+      "MSGQ" 0x4d534751 SysV IPC message queues            (RCS)
+      "MVRS" 0x4d565253 Multiverse extension               (RCS)
+      "NULL" 0x4E554C4C Null                               (Cats-Eye)
+      "NCRS" 0x4E435253 Ncurses Routines                   (Jesse Van Herk)
+      "ORTH" 0x4F525448 Orthogonal Easement Library        (Cats-Eye)
+      "PERL" 0x5045524C Generic Interface to Perl          (Cats-Eye)
+      "RAND" 0x52414e44 Random Numbers                     (RCS)
+      "REFC" 0x52454643 Referenced Cells Extension         (Cats-Eye)
+      "REXP" 0x52455850 Regular expression matches         (RCS)
+      "ROMA" 0x524F4D41 Roman numerals extension           (Cats-Eye)
+      "SETS" 0x53455453 Set operations                     (RCS)
+      "SCKE" 0x53434b45 Extensions to SOCK                 (unknown)
+      "SGNE" 0x53474E4C Extensions to SGNL                 (RCS)
+      "SGNL" 0x53474E4C Signal handling                    (Jesse Van Herk)
+      "SMEM" 0x534d454d SysV IPC shared memory             (RCS)
+      "SMPH" 0x534d5048 SysV IPC Semaphores                (RCS)
+      "SOCK" 0x534F434B tcp/ip socket extension            (RCS)
+      "SORT" 0x534f5254 Sorting                            (RCS)
+      "STCK" 0x5354434b Stack manipulation                 (RCS)
+      "STRN" 0x5354524E String functions                   (RCS)
+      "SUBR" 0x53554252 Subroutine extension               (RCS)
+      "TRDS" 0x54524453 IP travel in time and space        (RCS)
+      "TRGR" 0x54524752 Triggers                           (RCS)
+      "TERM" 0x5445524D Terminal extension                 (RCS)
+      "TIME" 0x54494D45 Time and Date functions            (RCS)
+      "TURT" 0x54555254 Turtle Graphics                    (Cats-Eye)
+      "TOYS" 0x544F5953 Standard Toys                      (Cats-Eye)
+      "UNIX" 0x554e4958 Some Unix access functions         (RCS)
+      "WIND" 0x57494E44 Windows extensions                 (RCS)
+
+Invocation:
+-----------
+funge [switches] source-files
+-1      Use single dimension Funge-space
+-2      Use two dimensional Funge-space (default)
+-3      Use three dimensional Funge-space
+-93     Allow only Funge/93 instructions
+-98     Run in Funge/98 mode (default)
+-108    Run in Funge/108 mode
+-d      Enable debugger
+-D      Delay between instruction execution
+-f2     Run dynamic fingerprints in befunge mode
+-i n    Change initial stack size (def 1000)
+-s      Map Funge-space to screen
+-sb     Sandbox mode
+-S      Suppress summary
+-t      Enable tracing mode
+-ns     No stack output on trace
+-nx     Allow TURT to display on X terminal
+-v      Show version
+-vm     Create new Virtual Machine
+-w      Enable warnings
+-Y      Use Rc/Funge-98 version of 'y' command
+
+Sandbox Mode:
+-------------
+Sandbox mode allows the interpreter to be run in a more safe environment.
+It disallows the following basic funge commands:
+
+    i - Input file
+    o - Output file
+    = - Execute system command
+
+The following fingerprints are not available in sandbox mode:
+
+    DIRF - Directory functions
+    EMEM - Extended memory
+    FILE - File access functions
+    FORK - Fork process
+    PERL - Perl interface
+    MSGQ - Message queues
+    SGNE - Signals
+    SGNL - Signals
+    SMEM - Shared memory
+    SMPH - Semaphores
+    SCKE - SOCK extensions
+    SOCK - Socket extension
+
+
+Funge/98 Instruction Set:
+-------------------------
+     Nop
+!   (n -- !n)           Logical Negate
+"                       Toggle string mode
+#                       Skip next cell
+$   (n -- )             Drop top stack entry
+%   (n1 n2 -- n1%n2)    Modulo
+&   ( -- n)             Read number from stdin
+'   ( -- c)             Push next cell onto stack
+(   (gnirts n -- )      Overload functions A-Z
+)   (gnirts n -- )      Unload functions A-Z
+*   (n1 n2 -- n1*n2)    Multiplication
++   (n1 n2 -- n1+n2)    Addition
+,   (n -- )             Print tos as a character
+-   (n1 n2 -- n1-n2)    Subtraction
+.   (n -- )             Print tos as a number
+/   (n1 n2 -- n1/n2)    Division
+0   ( -- 0)             Push 0 onto stack
+1   ( -- 1)             Push 1 onto stack
+2   ( -- 2)             Push 2 onto stack
+3   ( -- 3)             Push 3 onto stack
+4   ( -- 4)             Push 4 onto stack
+5   ( -- 5)             Push 5 onto stack
+6   ( -- 6)             Push 6 onto stack
+7   ( -- 7)             Push 7 onto stack
+8   ( -- 8)             Push 8 onto stack
+9   ( -- 9)             Push 9 onto stack
+:   (n -- n n)          Duplicate tos
+;                       Skip to next ;
+<                       Set ip delta to -1,0,0
+=   (0gnirts -- n)      Pass string to underlying system
+>                       Set ip delta to 1,0,0
+?                       Set ip delta to random direction
+@                       Terminate thread
+A-Z                     Overloadable functions
+[                       Turn ip delta to the left
+\   (n1 n2 -- n2 n1)    Swap top two stack elements
+]                       Turn ip delta to the right
+^                       Set ip delta to 0,-1,0
+_   (n -- )             does > if tos is zero, else <
+`   (a b -- n)          Pushes 1 if a>b else pushes 0
+a   ( -- 10)            Push 10 onto stack
+b   ( -- 11)            Push 11 onto stack
+c   ( -- 12)            Push 12 onto stack
+d   ( -- 13)            Push 13 onto stack
+e   ( -- 14)            Push 14 onto stack
+f   ( -- 15)            Push 15 onto stack
+g   (v -- n)            Get value stored in funge cell
+h                       Sets ip delta to 0,0,1
+i   (v f 0gnirts -- vs vo) Load a file, Acts as r on failure
+j   (n -- )             jumps ip delta * tos;
+k   (n -- )             Execute command in next cell n times
+l                       Sets ip delta to 0,0,-1
+m   (n -- )             Does l if tos is zero else h
+n                       Clears stack
+o   (vs vo 0gnirts -- ) Write funge space to file
+p   (n v -- )           Put value into funge cell
+q   (n -- )             Immedietly quit program, tos is return code
+r                       Reflect the delta
+s   (n -- )             Take tos and store into next cell
+t                       Start new thread
+u                       Transfer entries between soss and toss
+v                       Set ip delta to 0,1,0
+w   (a b -- )           do ] if a>b, [ if a<b, otherwise z
+x   (x y z -- )         Set ip delta from stack
+y   (n --)              Get System information
+z                       nop
+{   (n -- )             Begin Block
+|   (n -- )             does v if tos is zero, else ^
+}   (n -- )             End Block
+~   ( -- c)             Input character from stdin
+
+System Information - y Command:
+-------------------------------
+  RC/Funge interprets the 'y' command a bit differently from the specification.
+According to the specs, a positive argument will leave the n'th cell from the
+y command on the stack.  I thought that it is more useful to allow n to 
+specify which information entry rather than cell.  Entries 1-9 will work
+excactly as the specification, but 10 up act differently.  According to the
+spec 55+y would retrieve one cell from the vector of the current IP
+location.  RC/Funge instead returns the entire vector.  Entry 11 would
+then contain the entire vector for the current IP's delta, whereas in the
+specs, 11 would return the second cell of the location vector in befunge or
+trefunge OR the x delta in unefunge.  I felt it more useful to be able to
+directly specify an information item rather than have to calculate beyond
+entry 9 in order to find the correct cell.
+  If you desire this behaviour then use a -Y on the command line.
+
+Entry   Description
+1       Flags
+        bit 0 = 1 if 't' command is implemented
+        bit 1 = 1 if 'i' command is implemented
+        bit 2 = 1 if 'o' command is implemented
+        bit 3 = 1 if '=' command is implemented
+2       Number of bytes per cell
+3       Handprint
+4       Version number
+5       Operating Paradigm
+        0=unavailable
+        1=Equivalent to c language system()
+        2=Equivalent to interpretation by specific shell program
+        3=Executes in shell funge was started from
+6       Path separator character
+7       Number of scalars per vector (1=unefunge, 2=befune, 3=trefunge)
+8       ID of current IP
+9       not used
+10      Vector for location of current IP
+11      Vector for delta of current IP
+12      Vector containting storage offset of current IP
+13      Vector pointing to smallest address with non-space contents
+14      Vector pointing to largest address with non-space contents
+15      (year-1900)*256*256 + month*256 + day
+16      hour*256*256 + minute*256 + second
+17      Number of stacks on the stack stack
+18      Size of each stack on the stack stack
+19      The command line
+20      The environement, each environment entry is in the form of a 0gnirts
+        name=value string.  double zeros denote the end of the list
+
+Supported Fingerprints:
+-----------------------
+Note: Vectors used in any fingerprint are stored on the stack as (x y z)
+      with x being farthest from the top of stack.  Z only exists in
+      Trefunge and y only exists in Befunge or Trefunge
+
+      All vector operations in funge-space will use the IP's storage
+      offset unless noted in the specific fingerprint
+
+      Unless otherwise specified fingerprint data is local to the IP
+      that loaded the fingerprint
+
+
+"3DSP" 0x33445350
+-----------------
+A   (V3a V3b -- V3)     Add two 3d vectors
+B   (V3a V3b -- V3)     Subtract two 3d vectors
+C   (V3a V3b -- V3)     Cross porduct of two vectors
+D   (V3a V3b -- n)      Dot product of two vector
+L   (V3 -- n)           Length of vector
+M   (V3a V3b -- V3)     Multiply two 3d vectors
+N   (V3 -- V3)          Normalize vector (sets length to 1)
+P   (Vdm Vsm -- )       Copy a matrix
+R   (Vdm axis ang -- )  Generate a rotation matrix
+S   (Vdm V3 -- )        Generate a scale matrix
+T   (Vdm V3 -- )        Generate a translation matrix
+U   (V3 -- V3 V3)       Duplicate vector on top of stack
+V   (V3 -- x y)         Map 3d point to 2d view
+X   (V3 Vam -- V3)      Transform a vector using transformation matrix
+Y   (Vdm Vam Vbm -- )   Multiply two matrices
+Z   (n V3 -- V3)        Scale a vector
+
+All numbers used by these functions are single precision floating point
+like in extension "FPSP"
+
+In R, ang is in degrees, axis is an integer (1=x,2=y,3=z)
+
+Matrices are stored in funge-space as 2-dimenstion 4x4 arrays. the
+address vector will point to the x1y1 cell.
+
+==========================================================================
+
+"ARRY" 0x41525259
+
+A (Va n x -- Va)             - Store single dimension
+B (Va x -- Va n)             - Retrieve single dimension
+C (Va n x y -- Va)           - Store two dimension
+D (Va x y -- Va n)           - Retrieve two dimension
+E (Va n x y z -- Va)         - Store three dimension
+F (Va x y z -- Va n)         - Retrieve three dimension
+G ( -- n)                    - Get maximum dimensions allowed
+
+Array data is stored in funge-space
+
+Negative array indexes are allowed
+
+Dimensionality of arrays is NOT tied to the dimensionality of the
+funge-space, however it is NOT required for an interpreter to support
+arrays greater than funge-space dimensions.  G can be used to determine
+what array dimensionality can be used.  Rc/Funge-98 supports three-
+dimensional arrays in all funge-spaces.
+
+Va is a vector in the form of the current funge-space, regardless of
+the array dimensionality
+
+Addresses used by this extension are absolute, the storage offset does
+NOT apply to these functions.
+
+==========================================================================
+
+"BASE" 0x42415345
+-----------------
+B   (n -- )             Ouptut top of stack in binary
+H   (n -- )             Ouptut top of stack in hex
+I   (b -- n)            Read input in specified base
+N   (n b -- )           Output n in base b
+O   (n -- )             Ouptut top of stack in octal
+
+==========================================================================
+
+"BOOL" 0x424F4F4C
+-----------------
+A (a b -- r)                 - And
+N (a -- r)                   - Not
+O (a b -- r)                 - Or
+X (a b -- r)                 - Xor
+
+==========================================================================
+
+"CPLI" 0x43504C49
+-----------------
+A   (ar ai br bi -- r i) Add two complex integers
+D   (ar ai br bi -- r i) Divide two complex integers
+M   (ar ai br bi -- r i) Multiply two complex integers
+O   (r i -- )            Output a complext number
+S   (ar ai br bi -- r i) Subtract two complex integers
+V   (r i -- n)           Absolute value of a complex integer
+
+==========================================================================
+
+"DATE" 0x44415445
+-----------------
+A (y m d days -- y m d)             Add days to date
+C (jd -- y m d)                     Convert julian day to calendar date
+D (y1 m1 d1 y2 m2 d2 -- days)       Days between dates
+J (y m d -- jd )                    Convert calendar date to julian day
+T (y d -- y m d)                    Year/day-of-year to full date
+W (y m d -- d)                      Day of week (0=monday)
+Y (y m d -- d)                      Day of year (0=Jan 1)
+
+A days may be negative
+
+Since all these functions work with integer values, julian day calculations
+assume 12:00 noon as the time.
+
+Gregorian calendar is assumed for calendar dates
+
+==========================================================================
+
+"DIRF" 0x44495246
+-----------------
+C   (0gnirts -- )        Change directory
+M   (0gnirts -- )        Make a directory
+R   (0gnirts -- )        Remove a directory
+All functions act as r on failure
+
+==========================================================================
+
+"EVAR" 0x45564152
+-----------------
+G   (0gnirts -- 0gnirts) Get value of an environment variable
+N   ( -- n )             Get number of environment variables
+P   (0gnirts --)         Put a value into the environemnt (form: name=value)
+V   (n -- 0gnirts)       Get n'th environmnt variable (form: name=value)
+
+==========================================================================
+
+"EMEM" 0x454d454d
+-----------------
+A (size -- hnd )           Allocate memory
+F (hnd -- )                Free memory
+G (hand n addr -- .. )     Get bytes from memory
+P (.. hand n addr -- )     Put bytes into memory
+R (hnd size -- )           Reallocate memory
+
+Errors on any instructions will reflect
+
+This is essentially an interface into malloc.
+
+As far as implementing this, hnd can be the direct pointer if it fits
+within the cell size of the interprter, or else a seperate list can
+be maintained and this would be the handle into the list.
+
+Stack entries written to memory using P truncate to bytes.
+
+==========================================================================
+
+"EXEC" 0x45584543
+-----------------
+A ( V n -- )             Execute command at vector n times from current
+                         location, IP will be pointed at the A
+B ( V n -- )             Like A but IP will be reset each iteration
+G ( V -- )               Set position of IP to vector
+K ( n -- )               what k should have been, will skip following
+                         instruction if it is the iterated one
+R ( n -- )               Like K but IP is reset after each iteration
+X ( cmd n -- )           execute command on stack n times
+
+An IP reset as used in B and R reset the IP position only, nothing else.
+
+==========================================================================
+
+"FILE" 0x46494C45
+-----------------
+C   (h --)              Close a file
+D   (0gnirts -- )       Delete a file
+G   (h -- h 0gnirts b)  Read string from file (like c fgets)
+L   (h -- h n)          Get location of file pointer
+O   (Va m 0gnirts -- h) Open a file (Va=i/o buffer)
+    m: 0 = read
+       1 = write
+       2 = append 
+       3 = read/write
+       4 = truncate read/write
+       5 = append read/write
+P   (h 0gnirts -- h)    Write string to file (like c fputs)
+R   (h n -- h)          Read n bytes from file to buffer
+S   (h m n -- h)        Seek to position n in file
+    m: 0 = from beginning
+       1 = from current location
+       2 = from end
+W   (h n -- h)          Write n bytes from buffer to file
+All file functions on failure act as r.  Functions W and R write cells as
+bytes, any cells containing values greater than 255 will have the top bits
+stripped.
+
+==========================================================================
+
+"FING" 0x46494e47
+-----------------
+X (sem sem -- )         Swap two semantics
+Y (sem -- )             Drop semantic
+Z (src dst -- )         Push source semantic onto dst
+
+sem can be 0-25 or 'A through 'Z.  Any other value is an error and
+will reflect
+
+Z pull push a reflect if the source semantic stack is empty
+
+==========================================================================
+
+"FNGR" 0x464E4752
+-----------------
+A   ( -- )              Set ( and ) to work in absolute mode
+B   ( -- fp 1)          Create a Blank extension on top of stack
+                        (all entries are set to transparent).  The standard 
+                        fingerprint id for this copy will be 0xFFFFFFFF. 
+                        This is useful to create a customized
+                        extension containing pieces from many others.
+C   (new n old o -- )   Copy instruction 'old' in fingerprint 'o' to 
+                        instruction 'new' in fingerprint 'n'
+D   (inst n-- )         Delete an instruction from fingerprint with id n
+F   (fp -- n)           Get current id for specified fingerprint
+                        (fp is a 1 cell version, like from ) )
+K   (n -- )             Kill extension at selected position in fingerprint stack
+N   ( -- n)             Get number of fingerprints loaded
+O   ( -- )              Return ( and ) to the official functions
+R   ( -- )              Set ( and ) to work in roll mode
+S   ( -- )              Set ( and ) to work in swap mode
+T   (fp n -- )          Tag stack entry n with new fingerprint fp
+X   (n n -- )           Exchange the positions of two fingerprints in the stack
+All instructions on failure act like r.
+The fingerprint stack and fingerprint ids as used by this extension:
+The fingerprint stack consists of all loaded fingerprints.  When a fingerprint
+is loaded it is pushed onto this stack.  When an A-Z instruction is executed
+the tos of this stack is the first searched for the command, and then on 
+downwards through the stack, if the bottom is hit, then an r command will be 
+executed.  For most all commands in this extension, the fingerprint id is 
+actually the position on the fingerprint stack.  The top has id 0, the second 
+id 1, and so on.  So, if you were to execute "'A1D" This would delete the 'A'
+command from the extension sitting on the second position on the fingerprint
+stack.
+Absolute Mode:
+In absolute mode, the ( and ) instructions take on new meanings:
+  (  - A number is popped of off the stack, this numbers is the fingerprint id
+       (stack position) of what should be considered the top of stack.  It does
+       not actually move anything, it only changes where the instruction search
+       starts.  Extensions on the stack above the selected one will not be
+       searched whereas the selected and donward will still be searched. 
+       Executing "0(" will return the search to the top of the fingerprint
+       stack.
+  )  - A number is popped of off the stack, this number specifies which
+       fingerprint is to be copied over the top of the current top of stack.
+       The extenstion that is currently on the top of the fingerprint stack
+       will be deleted amd the selected one takes its place.  The selected
+       entry also remains in its original stack position, only a copy is made.
+       The search point is then reset to the top of the fingerprint stack.
+       Unlike the ( command, this will allow all other stack entries to be
+       searched.
+Roll Mode:
+In roll mode, the ( and ) instructions take on new meanings:
+  (  - A number is popped off the data stack and is used to roll the
+       fingerprint stack.  The item at the selected entry is removed and
+       moved to the top of stack, while all other entries are moved down.
+       This operates like the forth "roll" command.
+  )  - This works like (, but the roll is reversed.  The top of stack is
+       moved to the selected position while all other entries are moved up.
+       This operates like the forth "-roll" command.
+Swap Mode:
+In swap mode, the ( and ) instructions take on new meanings:
+  (  - A number is popped from the data stack.  This specifies which entry
+       in the fingerprint stack is to be swapped with the top of the
+       fingerprint stack.
+  )  - This command uses no arguments from the data stack.  It merely
+       swaps the top two entries on the fingerprint stack
+Note: In all modes, on failure ( and ) will act like r.
+
+      When FNGR is loaded the fingerprint stack does NOT act like the spec,
+      Instead there is a single fingerprint stack and unloading a fingerprint
+      will remove the semantics for that fingerprint and not the semantics
+      assigned to the various commands of the unloaded fingerprint.
+      When FNGR is unloaded then the ( and ) commands will work like the
+      official specs.
+
+==========================================================================
+
+"FOBJ" 0x464f424a
+
+D (ref -- )           - Destruct an object
+I (0gnirts -- ref)    - Instantiate an object
+M (nargs ref m -- ..) - Call an object method
+N (ref -- 0gnirts)    - Get object name
+
+All functions reflect upon error
+
+ref referes to an index into a global object table
+
+In Funge/Multiverse each universe has its own global object table
+
+I 0gnirts referes to the funge file containing the code for the object
+
+M nargs specifies how many stack entries to transfer to the IP created
+in the object funge-space.  Stack order is preserved.  The count is NOT
+placed on the destination IPs stack.
+
+Funge files are in trefunge format.  Each z level is a message handler,
+therefore message handlers start at 0 and go up.
+
+Funge-space for objects is in Trefunge mode.
+
+Starting point for any message handler is always [0][0][m] with a delta
+of [1][0][0]
+
+if cell[0][0][m] is a space then cause M to reflect
+
+Object method calls execute in a single tick
+
+The full capabilites of the funge engine should be available to object
+message handlers, this includes i,o,=,t, fingerprints, etc.
+
+Funge multiverse is not required for this extension, but each object must
+be its own funge-space.
+
+In Rc/Funge-98, each object is a stand-alone VM that is NOT part of the
+funge multiverse.
+
+Funge-space of a loaded object must remain consistant across method calls.
+In other words, if the method modifies its own funge-space, that change
+must remain for further method calls.
+
+When the last IP terminates a value is popped off its stack, that many
+stack entries are transferred back to the calling IP.  Order is preserved.
+
+Global object table should be initialized at interpreter startup, and not
+by loading this fingerprint
+
+Object reference numbers may be reused
+
+==========================================================================
+
+"FPDP" 0x46504450
+-----------------
+A   (a b -- n)          Add two double precision fp numbers
+B   (n -- n)            Sin of double precision fp number
+C   (n -- n)            Cosin of double precision fp number
+D   (a b -- n)          Divide two double precision fp numbers
+E   (n -- n)            Arcsin of double precision fp number
+F   (n -- n)            Convert integer to floating point
+G   (n -- n)            Arctangent of double precision fp number
+H   (n -- n)            Arccosin of double precision fp number
+I   (n -- n)            Convert floating point to integer
+K   (n -- n)            Natural  logarithm of double precision fp number
+L   (n -- n)            Base 10 logarithm of double precision fp number
+M   (a b -- n)          Multiply two double precision fp numbers
+N   (n -- n)            Negate double precision fp number
+P   (n -- )             Print a floating point number
+Q   (n -- n)            Double precision square root
+R   (0gnirts -- n)      Convert ascii number to floating point
+S   (a b -- n)          Subtract two double precision fp numbers
+T   (n -- n)            Tangent of double precision fp number
+V   (n -- n)            Absolute value of double precision fp number
+X   (n -- n)            Exponential of double precision fp number (e**n)
+Y   (x y -- n)          Raise x to the power of y
+
+==========================================================================
+
+"FPRT" 0x46505254
+D (format fh hl -- 0gnirts)   - Format FPDP type number
+F (format f -- 0gnirts)       - Format FPSP type number
+I (format n -- 0gnirts)       - Format an integer
+L (format h l -- 0gnirts)     - Format long integer
+S (format 0gnirts -- 0gnirts) - Format string
+
+Formats are printf style
+
+Error in formatting causes a reflect
+
+==========================================================================
+
+"FPSP" 0x46505350
+-----------------
+A   (a b -- n)          Add two single precision fp numbers
+B   (n -- n)            Sin of single precision fp number
+C   (n -- n)            Cosin of single precision fp number
+D   (a b -- n)          Divide two single precision fp numbers
+E   (n -- n)            Arcsin of single precision fp number
+F   (n -- n)            Convert integer to floating point
+G   (n -- n)            Arctangent of single precision fp number
+H   (n -- n)            Arccosin of single precision fp number
+I   (n -- n)            Convert floating point to integer
+K   (n -- n)            Natural  logarithm of single precision fp number
+L   (n -- n)            Base 10 logarithm of single precision fp number
+M   (a b -- n)          Multiply two single precision fp numbers
+N   (n -- n)            Negate single precision fp number
+P   (n -- )             Print a floating point number
+Q   (n -- n)            Single precision square root
+R   (0gnirts -- n)      Convert ascii number to floating point
+S   (a b -- n)          Subtract two single precision fp numbers
+T   (n -- n)            Tangent of single precision fp number
+V   (n -- n)            Absolute value of single precision fp number
+X   (n -- n)            Exponential of single precision fp number (e**n)
+Y   (x y -- n)          Raise x to the power of y
+Notes: Trig functions work in radians
+
+==========================================================================
+
+"FIXP" 0x4649585
+----------------
+A   (a b -- a and b)    And
+B   (n -- arccos(b))    Find arccosin of tos
+C   (n -- cos(b))       Find cosin of tos
+D   (n -- rnd(n))       RanDom number
+I   (n -- sin(b))       Find sin of tos
+J   (n -- arcsin(b))    Find arcsin of tos
+N   (a -- 0-a)          Negate
+O   (a b -- a or b)     Or
+P   (a -- a*pi)         Multiply by pi
+Q   (a -- sqrt(a))      Square root
+R   (a b -- a**b)       Raise a to the power of b
+S   (n -- n)            Replace tos with sign of tos
+T   (n -- tan(b))       Find tangent of tos
+U   (n -- arctan(b)     Find arctangent of tos
+V   (n -- n)            Absolute value of tos
+X   (a b -- a xor b)    Xor
+The functions C,I,T,B,J,U expect their arguments times 10000,
+ for example: 45 should be passed as 450000.  The results will also be 
+ multiplied by 10000, thereby giving 4 digits of decimal precision.
+Note: Trigonometric functions work in degrees. not radians.
+
+==========================================================================
+
+"FORK" 0x464F524B
+T ( -- pid flg )                Fork new process
+
+T - flg=0 for parent, 1 for child.
+T - child gets parent's pid, parent gets child's pid
+T - child has its IP delta reflected
+T - flg=-1 error in fork, does not reflect
+
+==========================================================================
+
+"FRTH" 0x46525448
+-----------------
+D   ( .. -- .. n)       Push depth of stack to tos
+L   ( .. n -- .. n)     Forth Roll command
+O   (a b -- a b a)      Forth Over command
+P   (.. n -- .. n)      Forth Pick command
+R   (a b c -- b c a)    Forth Rot command
+
+==========================================================================
+
+"HRTI" 0x48525449
+-----------------
+E   ( -- )              Erase timer mark, this makes T act like r
+G   ( -- n)             Get smallest tick size (in microseconds)
+M   ( -- )              Mark current timer value
+S   ( -- n)             Get number of microseconds since last full second
+T   ( -- n)             Get time since last marked (in microseconds)
+
+==========================================================================
+
+"ICAL" 0x4943414c
+A (a -- r)        - And
+F (n -- )         - Forget
+I (a b -- r)      - Interleave a $ b
+N (Va -- )        - Next
+O (a -- r)        - Or
+R (n -- )         - Resume
+S (a b -- r)      - Select a ~ b
+X (a -- r)        - XOr
+
+A,O,X work in 16 bits unless a is greater than 16 bits
+
+I a and b are 16-bits and will produce a 32 bit result
+
+N reflects if there are already 79 entries on the Next stack
+
+Neither N nor R affect the delta!
+
+0R is not an error and will just continue without resuming
+
+Negative argument to R is an error and will reflect
+
+R on an empty nexting stack will continue without resuming
+
+R if n is greater than the number of nexting stack entries, the nexting
+  stack will be cleared and no resume will take place
+
+==========================================================================
+
+"IIPC" 0x49495043
+-----------------
+A   ( -- n)             Get ancestors unique id
+D   ( -- )              Go Dormant until stack is manipulated by another ip
+G   (i -- n)            Get the top value of another ip's stack (pop)
+I   ( -- n)             Get ip's own unique id
+L   (i -- n)            Look at top stack value of another ip
+P   (n i -- )           Put a value onto another ip's stack
+
+==========================================================================
+
+"IMAP" 0x494D4150
+-----------------
+C   ( -- )              Clear all instruction remaps
+M   (new old -- )       Remap an instruction
+O   (n -- )             Return instruction n to its old function
+
+This extension is intended for mapping instrucions in the 0-255 range
+
+Attempting to map instructions outside of the 0-255 range reflect
+
+Chained remaps are not supported by this extension.  Only a single level
+of mapping is supported.
+
+==========================================================================
+
+"IMTH" 0x494d5448
+A (.. n -- r)                - Average
+B (n -- r)                   - Absolute value
+C (n -- r)                   - Multiply by 100
+D (n -- r)                   - Decrease towards zero
+E (n -- r)                   - Multiply by 10,000
+F (n -- r)                   - Factorial
+G (n -- r)                   - sign
+H (n -- r)                   - Multiply by 1,000
+I (n -- r)                   - Increase away from zero
+L (n c -- r)                 - shift n left c times
+N (.. n -- r)                - Minimum value
+R (n c -- r)                 - shift n right c times
+S (.. n -- r)                - sum
+T (n -- r)                   - Multiply by 10
+U (n -- )                    - Unsigned print
+X (.. n -- r)                - Maximum value
+Z (n -- r)                   - Negate
+
+A n=0 is not an error and will return 0
+A n<0 is an error and will reflect
+A n>stacksize is not an error
+F will reflect on negative
+L c can be negative and will shift right
+R c can be negative and will shift left
+L,R count of zero will return the argument unmodified
+N,X will reflect if count <= 0
+N,X count greater than stack size is not an error
+S n=0 is not an error and will return 0
+S n<0 is an error and will reflect
+S n>stacksize is not an error
+D input of zero is not an error and will produce zero
+I input of zero is not an error and will produce zero
+
+==========================================================================
+
+"INDV" 0x494E4456
+-----------------
+G   (Vp - n)            Pointer get number
+P   (n Vp -- )          Pointer put number
+V   (Va -- V)           Pointer get vector
+W   (V Va --)           Pointer put vector
+Pointer functions pop a vector off the stack which points to another
+vector in memory which is the pointer to the target cell.
+
+Vectors are stored in memory with a delta of 1,0,0 with Z being first
+in trefunge, and Y first in befunge.
+
+==========================================================================
+
+"IPMD" 0x49504d44
+B ( -- )                    Run in BeFunge mode
+D ( -- )                    Run in Default mode for VM
+Q ( -- d)                   Query for mode IP is running in
+T ( -- )                    Run in TreFunge mode
+U ( -- )                    Run in UniFunge mode
+
+These commands only affect the IP executing them.  Other IPs running
+in the same VM are not affected.
+
+These functions affect how the IP interprets instructions, they will
+be limited or expanded based upon the mode the IP is running in.
+
+These modes are NOT affected by the mode the VM is running in.  It is
+allowed to set an IP into TreFunge mode in a BeFunge funge-space. 
+The TreFunge instructions must however work.
+
+Vectors will be affected by the mode the IP is running in.  Example:
+If a VM is running in BeFunge mode and an IP is running in TreFunge
+mode and wants to pop a vector, it will pop a 3 coordinate vector,
+likewise if the IP were running in UneFunge mode, then it will pop a
+single value vector.
+
+When running in a mode less than Funge-Space, coordinates above the
+mode of the IP will be set for the coordinate of the ip.  For example
+if the IP is at 20,30 then exectues U and then a g command is exectued,
+g will retrieve a value from row 30, not 0
+
+When running in a mode less than Funge-Space, x will set unpopped
+delta values to 0.
+
+Funge-space supports up to TreFunge when using this extension
+
+==========================================================================
+
+"JSTR" 0x4a535452
+-----------------
+P (Vd Va n -- )         pop n cells off of the stack and write at Va with 
+                        delta Vd.
+G (Vd Va n -- 0gnirts)  read n cells from position Va and delta Vd, push 
+                        on stack as a string.
+
+==========================================================================
+
+"LONG" 0x4c4f4e47
+-----------------
+A (ah al bh bl -- rh rl)   - Long integer add
+B (ah al -- rh rl)         - Absolute value
+D (ah al bh bl -- rh rl)   - Long integer division
+E (n -- rh rl)             - Sign extend integer to long integer
+L (ah al n -- rh rl)       - Shift long integer left n times
+M (ah al bh bl -- rh rl)   - Long integer multiplicaton
+N (ah al -- rh rl)         - Negate long integer
+O (ah al bh bl -- rh rl)   - a mod b
+P (ah al -- )              - Print long integer
+R (ah al n -- rh rl)       - Shift long integer right n times
+S (ah al bh bl -- rh rl)   - Long integer subtract
+Z (0"gnirts" -- rh rl)     - Convert ascii to long integer
+
+long integers are 2 cell integers, if the interpreter's cell size is 32, then
+long integers are 64-bits.
+
+Division by zero results in zero, not error
+
+==========================================================================
+
+"MACR" 0x4d414352
+-----------------
+A-Y  ( -- )            Execute specified macro
+Z    (V -- )           Specify where macro block is
+
+Macros are simple mini-funge like befunge subroutines that execute in a
+single tick.
+
+The Macro block may be located anywhere in Funge-Space.  Each macro runs
+with a delta of 1,0,0 macro A is located at the macro block vector, 
+Macro B is one line below at the same starting X, C below that, etc.
+
+Macros execute with the IP where it is! not in the macro space.
+
+Instructions affect the IP that called the Macro
+
+A macro teminates when either a @ is found or an invalid instruction is
+found
+
+Most standard Funge-98 instructions can be used within macro blocks, but
+keep in mind they affect the IP where it is and not inside the macro
+block
+
+A-Z generally are not allowed within macros, however some A-Z commands
+perform special functions when executed inside of a macro:
+
+    A - like _ but affects the macro pointer instead of the IP
+    B - Move IP backwards
+    E - Change macro delta to 1,0,0
+    F - Move IP forwards
+    G - Get next macro cell onto stack
+    I - like | but affects the macro pointer instead of the IP
+    J - like j but affects the macro pointer instead of the IP
+    L - like [ but affects the macro pointer instead of the IP
+    N - Change macro delta to 0,-1,0
+    R - like ] but affects the macro pointer instead of the IP
+    S - Change macro delta to 0,1,0
+    T - Acts like # but affects the macro pointer instead of the IP
+    W - Change macro delta to -1,0,0
+
+==========================================================================
+
+"MODE" 0x4D4F4445
+-----------------
+H                       Toggles hover mode (relative vs absolute delta changes)
+I                       Toggles invert mode (push to bottom of stack)
+Q                       Toggles queue mode (pop from bottom of stack)
+S                       Toggles switch mode (alters [,].{.}.(.) commands)
+
+==========================================================================
+
+"MODU" 0x4D4F4455
+-----------------
+M   (a b -- a mod b)    x-floor(x/y)*y
+U   (a b -- a mod b)    Unsigned result
+R   (a b -- a mod b)    C-language remainder
+
+Note: MODU was defined before C99, therefore command R is implementation
+      dependant
+
+==========================================================================
+
+"MSGQ" 0x4d534751
+-----------------
+G (key flags -- id )          Get message queue identifier
+K (id -- )                    Kill message queue
+R (n mtyp id flags -- .. n t) Read message to stack
+S (.. n mtyp id flags -- )    Send bytes on stack as message
+T (id -- nMsgs maxsize)       Get message system info
+
+G Flags:
+  4096 - IPC_CREAT          - Create if it does not exist
+  8192 - IPC_EXCL           - Open in exclusive mode
+  16384 - IPC_PRIVATE    - Create private
+  low 9 bits are access permissions
+
+R Flags:
+  1 - IPC_NOWAIT            - Do not block if no messages
+  2 - MSG_NOERROR           - truncate message instead of error
+
+S Flags:
+  1 - IPC_NOWAIT            - Do not block
+
+All functions reflect on error with error code on stack
+   1 - EACCES - A message queue exists for key, but no permission to
+                access
+   2 - EEXIST - Message queue exist when IPC_CREAT and IPC_EXCL are
+                both specified
+   3 - ENOENT - No mesage queue exists for key and IPC_CREAT was not
+                specified
+   4 - ENOMEM - Not enough memory
+   5 - ENOSOC - Message queue needs to be create but no more message
+                queues allowed.
+   6 - EFAULT - Address for IPC_SET or IPC_STAT not accessable
+   7 - EINVAL - Invalid value for cmd or id
+   8 - EPERM  - No permissions to perform action
+   9 - EAGAIN - A blocking condition was created and IPC_NOWAIT was specified
+  10 - EIDRM  - Message queue was removed
+  11 - EINTR  - Sleeping on a full message queue, the process caught
+                a signal
+  12 - E2BIG  - Message size greater than specified maximum
+  13 - ENOMSG - IPC_NOWAIT was specifed and no message of the required
+                type was available
+
+Maximum message size MAY BE limited to a set size.  Rc/Funge-98 allows
+for messages up to 4096 bytes;
+
+==========================================================================
+
+"MVRS" 0x4d565253
+-----------------
+B (0gnirts flgs lng dim--)   - Big-Bang, create another universe
+C ( -- n)                    - Number of existing universes
+F (0gnirts Vd Vs Vsz)        - Copy funge-space from another universe
+G (0gnirts Vp Vd)            - Go to another universe
+J (0gnirts --)               - Jump to new universe
+N ( -- 0gnirts)              - Get name of current universe
+P (0gnirts Vd Vs Vsz)        - Copy funge-space to another universe
+
+F source vector must be x,y,z even if source universe is unefunge or befunge
+
+F size vector is based upon current universe
+
+J keeps position and delta
+
+Any command specifying a universe will reflect if the universe does
+not exist
+
+B Flags:
+    0 - Default
+  512 - Supress summary
+ 1024 - Enable debugger
+ 2048 - Enable trace mode
+ 4096 - Rc/Funge-98 version of y
+     Flags from 512 upwards are implementation dependent and may vary
+     from interpreter to interpreter.  Flags 256 and below are reserved
+     and may change in the future.
+
+     Interpreters are not required to support any flags
+
+     If an unsupported flag below 512 is used, B should reflect
+
+     If an unsupported flag 512 and up is used, B should ignore it
+
+dim:
+    0 - Default
+    1 - Unefunge
+    2 - Befunge
+    3 - Trefunge
+    n - Other funges
+
+lng:
+    0 - Default
+    1 - Funge/93
+    2 - Funge/98
+    3 - Funge/108
+    All others reserved
+
+
+Defaults:
+Defaults are the creating universe's flags, dimensions, and language
+
+==========================================================================
+
+"NCRS" 0x4E435253
+B ( -- )        Beep or visible beep.
+C (m -- )       clear all or part of the screen. m can be one of 0(whole
+                screen), 1(end of line), or 2(bottom of screen).
+E (m -- )       Set echo mode to m (1 == echo, 0 == noecho).
+G ( -- c)       get character c, modified by various flags
+I (m -- )       initialize curses mode if m == 1, else end curses mode.
+K (m -- )       set keypad mode to m (1 == keypad, 0 == nokeypad)
+M (x y -- )     move cursor to x,y on the screen
+N (m -- )       toggle input mode to m (1 == wait for newline, 0 == cbreak)
+P (c -- )       put the character c at the current on-screen cursor location.
+R ( -- )        refresh(update) window.
+S (0gnirts -- ) write given string at current on-screen cursor location.
+U (c -- )       unget character c. only guaranteed to work once.
+
+All functions act as r on error.  K is useful for getting KEY_foo codes,
+i.e. arrow keys, other special keys.  R must be called for the results of
+other operations to be displayed. You *must* call 'I' at the beginning
+*and* end of each program that uses NCRS.
+
+==========================================================================
+
+"NULL" 0x4E554C4C
+-----------------
+A-Z                     All set to reflect
+
+==========================================================================
+
+"ORTH" 0x4F525448
+-----------------
+A   (a b -- a and b)    And
+E   (a b -- a exor b)   exor
+G   (y x -- v)          Get value stored at x,y
+O   (a b -- a or b)     Or
+P   (v y x -- )         Store value in funge space x,y
+S   (0gnirts -- )       Print string located on stack
+V   (n --)              Change IP Delta X to tos
+W   (n --)              Change IP Delta Y to tos
+X   (n -- )             Change IP x coordinate to tos
+Y   (n -- )             Change IP y coordinate to tos
+Z   (n -- )             If zero, act like #
+
+==========================================================================
+
+"PERL" 0x5045524C
+-----------------
+E   (0gnirts -- 0gnirts) Evaluate a string in perl
+I   (0gnirts -- n)       Evaluate a string in perl, returning integer
+S   ( -- n)             Pushes 0 if underlying system is perl, else 1
+
+==========================================================================
+
+"RAND" 0x52414e44
+I (n -- r)      - Integer random number 0 <= r < n
+M ( -- max)     - Maximum allowed integer range
+R ( -- r)       - FPSP random number 0 <= r < 1
+S (n -- )       - Reseed rng with n
+T ( -- )        - Reseed rng from system timer or other source
+
+I n will be considered to be unsigned
+
+I n=0 is an error and will reflect
+
+==========================================================================
+
+"REFC" 0x52454643
+-----------------
+R   (Va -- r)           Produce a single cell reference to a vector
+D   (r -- Va)           Return the vector referenced by r
+
+==========================================================================
+
+"REXP" 0x52455850
+-----------------
+C ( 0gnirts flags  -- )           Compile a regular expression
+E ( 0gnirts flags -- results)     Match re to string
+F ( -- )                          Free compiled regex buffer
+
+Flags for C command:
+  1 - REG_EXTENDED - use posix extended regular expressions
+  2 - REG_ICASE    - ignore case
+  4 - REG_NOSUB    - Do not retrieve submatches
+  8 - REG_NEWLINE  - match any characters do not match newlines
+
+Flags for E command:
+  1 - REG_NOTBOL   - beginning of line always fails
+  2 - REG_NOTEOL   - end of line always fails
+C Reflects on error, with error number on stack:
+   1 - REG_BADBR    - Invalid use of back reference
+   2 - REG_BADPAT   - Invalid use of pattern operators
+   3 - REG_BADRPT   - Invalid use of repitition operators
+   4 - REG_EBRACE   - Unmatched brace
+   5 - REG_EBRACK   - Unmatched bracket
+   6 - REG_ECOLLATE - Invalid collating element
+   7 - REG_ECTYPE   - Invalid character class name
+   8 - REG_EEND     - Non-specific error
+   9 - REG_EESCAPE  - Trailing backslash
+  10 - REG_EPAREN   - Unmatched parenthesis
+  11 - REG_ERANGE   - Invalid use of range operator
+  12 - REG_ESIZE    - Compiled pattern too large
+  13 - REG_ESPACE   - Regex routines ran out of memory
+  14 - REG_ESUBREG  - Invalid backreference to subexpression
+
+E leaves the results of the match as a series of 0gnirts strings.  Each
+string representing the matched portion of a substring.  Top of stack
+will have the count of these 0gnirts strings.
+
+E Reflects if no match
+
+If REG_EXTENDED is not specified, then the base level of regular
+expressions is what is supported, similar to grep or sed.  The commands
+. * [ ] ^ $ \( \) should all be supported.
+
+==========================================================================
+
+"ROMA" 0x524F4D41
+-----------------
+C   ( -- 100)           Pushes 100 on stack
+D   ( -- 500)           Pushes 500 on stack
+I   ( -- 1)             Pushes 1 on stack
+L   ( -- 50)            Pushes 50 on stack
+M   ( -- 1000)          Pushes 1000 on stack
+V   ( -- 5)             Pushes 5 on stack
+X   ( -- 10)            Pushes 10 on stack
+
+==========================================================================
+
+"SCKE" 0x53434b45
+H ( 0gnirts -- addr) Convert FQDN or dotted quad to 32-bit address
+P ( sock -- ret)     True if data available on socket, else false
+
+==========================================================================
+
+"SETS" 0x53455453
+-----------------
+A (set v -- set)           - Add value to set
+C (set -- set n)           - get count of items in set
+D (set -- set set)         - duplicate set on stack
+G (Vd Vs -- set)           - Get set from Funge-space
+I (set set -- set set set) - Get intersection of sets
+M (set v -- set)           - is value member of set, 0 if not, 1 if is
+P (set -- set)             - Print a set
+R (set v -- set)           - Remove value from set
+S (set1 set2 -- set)       - Subtract set2 from set1
+U (set set -- set set set) - Get union of sets
+W (set Vd Vs -- set)       - write set to Funge-space
+X (seta setb -- setb seta) - Swap two sets
+Z (set -- )                - Drop set from stack
+
+all reflect if stack does not appear to have a proper set
+
+Sets are in the form (v1 v2 v3 .. vn ) n, n being closes to top of stack 
+denotes how many items are in the set.
+
+Nearly all instructions leave the work sets on the stack at the
+completion of the instruction.
+
+Order within the sets need not be maintained.  These are sets and not
+arrays.
+
+==========================================================================
+
+"SGNE" 0x53474E45
+A (sec -- old)          Set Alarm
+I ( -- pid )            Get PID of current process
+L (sec -- )             Sleep
+P ( -- )                Pause
+S (s -- )               Send signal to self
+T ( -- )                Abort
+
+These instructions affect the interpreter and therefore all IPs will be
+subject to the effects of these functions.
+
+L - If process is worken up because of a signal, then the IP is reflected
+    and the stack will contain the number of unslept seconds.  If the
+    Process wakes up normally after the sleep period is over then the IP
+    continues along its delta and nothing will be pushed onto the stack
+
+S - Reflects on error
+
+==========================================================================
+
+"SGNL" 0x53474E4C
+H ( Va n -- )           sets code at position Va to be handler for signal n.
+K ( p n -- )            send signal n to PID p
+M ( h n -- )            adjust signal mask by n with method h.
+R ( n -- )              restore default handler for signal n.  Not a stack!
+X ( c -- )              set current cell to character c. esp. useful with 'Y'.
+Y ( -- )                stall; ip will not advance, delta is maintained.
+
+All signals start with their default handlers.
+
+When a signal is received, pid of sender and signal number are pushed onto
+stack, in that order. A new thread is created to handle each signal; to 
+exit the signal handler, kill the thread with @.
+
+For the 'M' command, h can be one of 0(SIG_BLOCK), 1(SIG_UNBLOCK), or 
+2(SIG_SETMASK).
+
+Whatever X becomes has no effect on the ip that triggered it. 
+
+==========================================================================
+
+"SMEM" 0x534d454d
+-----------------
+G (key size flags -- id)  Get shared memory segment
+K (id -- )                Remove shared memory segment
+R (n addr id flags -- ..) Read bytes from shared memory segment
+T (id -- size )           Get shared memory info
+W (.. n addr id flags-- ) Write bytes to shared memory segment
+
+G Flags:
+  4096 - IPC_CREAT        - Create sement if it does not exist
+  8192 - IPC_EXCL         - Open for exclusive use
+  16384 - IPC_PRIVATE    - Create private
+  Low 9 bits are permissions
+
+R Flags:
+  1 - SHM_RDONLY          - Attach segment readonly
+
+W Flags:
+  1 - SHM_RDONLY          - Attach segment readonly
+
+All commands reflect on error with the error code on the stack:
+   1 - EACCES - User does not have permission to access
+   2 - EEXIST - IPC_CREAT|IPC_EXCL was specified and sement exists
+   3 - EFAULT - Address is not accessable
+   4 - EIDRM  - Shared memory segment was removed
+   5 - EINVAL - id is not a valid id
+   6 - ENFILE - System limit on open files has been reached
+   7 - EOVERFLOW -
+   8 - NOENT  - No segment exists for key and IPC_CREAT was not specified
+   9 - NOMEM  - No memory could be allocated
+  10 - ENOSPC - All possible shared memory IDs have been taken
+  11 - EPERM  - No permissions
+
+==========================================================================
+
+"SMPH" 0x534d5048
+-----------------
+A (sem id flags -- )         - Allocate semaphore
+D (sem id flags -- )         - De-allocate semaphore
+G (key nsems flags -- id)    - Get a semaphore set
+K (id -- )                   - Remove a semaphore set
+M (op sem id n -- )          - Multiple semaphore operations
+N (sem id -- z n)            - Get number of processes waiting on semaphore
+R (sem id -- n )             - Read semaphore value
+W (v sem id -- )             - Write semaphore value
+Z (sem id -- )               - Wait for zero semaphore
+
+A,D,Z Flags:
+  1 - IPC_NOWAIT  - Do not block
+  2 - SEM_UNDO    - Undo semaphores on program exit
+
+G Flags:
+  4096  - IPC_CREAT      - Create set if it does not exist
+  8192  - IPC_EXCL       - Open in exclusive mode
+  16384 - IPC_PRIVATE    - Create a private semaphore set
+  Low 9 bits specify Unix type permissions
+
+M (op sem id) is repeated on the stack n times, one set for each semaphore
+  to be changed.
+
+N result z is the number of processes waiting for semaphore to be zero, n
+  is the number of processes waiting for a positive value
+
+All commands reflect on error with the error code on the stack:
+   1 - E2BIG   - Value was too large
+   2 - EACCESS - Semaphore exists but no access allowed
+   3 - EAGAIN  - Operation could not go through with IPC_NOWAIT specified
+   4 - EEXIST  - IPC_CREAT|IPC_EXCL were specified and semaphore exists
+   5 - EFAULT  - Address isn't accessible
+   6 - EFBIG   - Invalid semaphore number
+   7 - EIDRM   - Semaphore set was removed
+   8 - EINTR   - Sleeping on a wait queue and process receives a signal
+   9 - EINVAL  - Semaphore set does not exist
+  10 - ENOENT  - No semaphore set exists and IPC_CREAT was not specified
+  11 - ENOMEM  - Not enough memory to create new semaphore set
+  12 - ENOSPC  - Maximum semaphore limit has been reached
+  13 - EPERM   - Insuficient privileges to execute command
+  14 - ERANGE  - Semaphore value exceeded allowed count
+
+==========================================================================
+
+"SOCK" 0x534F434B
+-----------------
+A   (s -- prt addr s)   Accept a connection
+B   (s ct prt addr -- ) Bind a socket
+B   (s ct path -1 -- )  Bind a unix socket
+C   (s ct prt addr -- ) Open a connection
+C   (s ct path -1 -- )  Open a connection on unix socket
+I   (0gnirts -- addr)   Convert an ascii ip address to a 32 bit address
+K   (s -- )             Kill a connection
+L   (n s -- )           Set a socket to listening mode (n=backlog size)
+O   (n o s -- )         Set socket option
+R   (V l s -- bytes)    Receive from a socket,
+S   (pf typ pro -- s)   Create a socket
+W   (V l s -- retcode)  Write to a socket
+note: All functions act as r on failure
+addr: 32 bit destination address
+ct:   1=AF_UNIX  2=AF_INET
+o:    1=SO_DEBUG      2=SO_REUSEADDR  3=SO_KEEPALIVE  4=SO_DONTROUTE
+      5=SO_BROADCAST  6=OOBINLINE
+pf:   1=PF_UNIX  2=PF_INET
+prt:  Port to connect to
+s:    Socket identifier
+typ:  1=SOCK_DGRAM  2=SOCK_STREAM
+pro:  1=tcp  2=udp
+V:    Vector to io buffer
+
+==========================================================================
+
+"SORT" 0x534f5254
+B (Va Vld Vbd w n -- )       - Sort block in funge-space
+F (Va Vd n -- )              - Sort funge-space
+K (.. n -- ..)               - Sort stack
+S (Va Vld Vsd n -- )         - Sort strings
+
+Reflect if n<=0
+
+Reflect if w<=0
+
+Any delta of all zeros is an error and will reflect
+
+All arguments are popped from the stack before error checking
+
+B Sorts only on first cell in each entry
+
+==========================================================================
+
+STCK 0x5354434b
+---------------
+B ( v n -- v .. )       - bury v value n deep into the stack
+C ( .. -- cnt)          - Get count of items on stack
+D ( .. n -- .. )        - Duplicate top n stack items
+G ( n Vdlt Vsrc -- .. ) - Read n stack entires from Funge-Space
+K (st en -- .. )        - Push block of stack cells to top
+N ( .. n -- .. )        - Reverse n items on stack
+P ( .. -- .. )          - Print contents of stack, non-destructive
+R ( .. -- .. )          - Reverse all items on stack
+S ( a b -- a a b )      - Duplicate second on stack
+T ( a b c -- b a c )    - Swap second and third items on stack
+U ( n -- n r )          - Drop items from stack until n is found
+W ( n Vdlt Vdst -- )    - Write n stack entires to Funge-Space
+Z ( 0string -- 0gnirts) - Reverse 0 terminated string on stack
+
+B if stack is not as deep as specified, reflect
+B if n is negative, push n zeroes above v
+
+K moves the block
+
+K if end is deeper than start, reflect
+
+K if end or start is negative, reflect
+
+K with start or end deeper than stack is NOT an error
+
+D works like ( a b c 3 -- a a b b c c )
+
+N with a count greater than the stack size is NOT an error
+
+U reflects if the item is not found.  r is the number of dropped items, next on
+  stack will be the found value
+
+S with stack size <= 1 is NOT an error
+
+T with stack size <3 is NOT an error
+
+Both W and G will reflect on a negative count
+
+G must reproduce the stack written by W
+
+==========================================================================
+
+"STRN" 0x5354524E
+-----------------
+A   (0gnirts 0gnirts -- 0gnirts) Append bottom string to upper string
+C   (0gnirts 0gnirts -- n)       Compare strings
+D   (0gnirts --)                 Display a string
+F   (0gnirts 0gnirts -- 0gnirts) Search for bottom string in upper string
+G   (Va -- 0gnirts)              Get string from specified position
+I   ( -- 0gnirts)                Input a string
+L   (0gnirts n -- 0gnirts)       Leftmost n characters of string
+M   (0gnirts s n -- 0gnirts)     n characters starting at position s
+N   (0gnirts -- 0gnirts n)       Get length of string
+P   (0gnirts Va -- )             Put string at specified position
+R   (0gnirts n -- 0gnirts)       Rightmost n characters of string
+S   (n -- 0gnirts)               String representation of a number
+V   (0gnirts -- n)               Retreive value from string
+Note:  functions G and P use deltas of 1,0,0
+
+       Specifiying a negative size for R,L,M is an error and will reflect
+
+       For R,L requesting more characters than the length of the string
+       will return the whole string
+
+       For R,L,M Requesting 0 or more characters from an empty string
+       returns an empty string
+
+       For M, specifying a negative start or a start beyond the end of the
+       string is an error and will reflect
+
+       For M, specifying a length that would go beyond the end of the
+       string is legal and will return from the start til the end of the
+       string
+
+       For M, requesting zero characters from the string will return
+       an empty string
+
+
+==========================================================================
+
+"SUBR" 0x53554252
+-----------------
+A   ( -- )              Set absolute addressing mode
+C   (Va n -- Va Vd .. ) Call a subroutine
+J   (Va -- )            Jump to another location
+O   ( -- )              Set offset (relative) mode
+R   (Va Vd .. n -- ..)  Return from subroutine
+
+Absolute mode is the default and should be the selected mode when this
+fingerprint is loaded.
+
+J and C each set delta to 1,0,0 at target, R restores the delta before the call.
+When C is executed, the tos specifies how many stack entries to retrieive
+from the stack and then place back onto the stack after the retrurn address
+and delta vectors are pushed on the stack.
+When R is executed, the tos specifies how many stack entries to retrieve
+from the stack before retrieving the delta and address vectors.  The popped
+entries will be restored to the stack after the vectors are popped.
+
+==========================================================================
+
+"TIME" 0x54494D45
+-----------------
+D   ( -- n)             Day of Month
+F   ( -- n)             Day since First of year
+G   ( -- )              Set time functions to GMT
+H   ( -- n)             Hours
+L   ( -- )              Set time functions to local time (default)
+M   ( -- n)             Minutes
+O   ( -- n)             Month (1=January)
+S   ( -- n)             Seconds
+W   ( -- n)             Day of Week (1=Sunday)
+Y   ( -- n)             Year
+
+==========================================================================
+
+"TRDS" 0x54524453
+-----------------
+C   ( -- )              Continue normal time
+D   (V -- )             Set absolute destination space coordinates
+E   (V -- )             Set relative destination space corrdinates
+G   ( -- n)             Get current time point
+I   ( -- )              Set inverse settings
+J   ( -- )              Initiate a jump
+P   ( -- n)             Maximum distance in the past ip can jump to
+R   ( -- )              Reset all tardis controls to default
+S   ( -- )              Stop time
+T   (n -- )             Set absolute destination time
+U   (n -- )             Set relative destination time
+V   (V -- )             Set destination vector
+Notes to time travelling ips:
+  Usage of time travel can be very punishing on the performance of the funge
+interpreter.  If travel is performed to the past, the interpreter must be
+capable of reproducing all conditions that existed at the destination time,
+which includes all ips, stacks, and funge space cells.  Some interpreters
+may only store time snapshots from only so far back (The furthest point in
+the past that can be jumped to can be determined with the P command).  The 
+RCS interpreter essentially reruns from point 0 and therefore all points in
+time can be jumped to (note: this can be quite time consuminmg if the 
+destination time point is tens or hundreds of thousands of instructions from
+time point 0).
+
+  Time travel into the future is not quite so punishing.  The ip that time
+travels will merely be frozen until time catches up with it, at which point
+it will continue to execute.
+
+  Time travel into the past has the following consequences:
+1. It is not possible to travel further back than time point 0.  Attempts
+   to travel beyond the beginning will leave the ip at time point 0.
+2. The original ip will still be born as per normal.  example.  If ip #2
+   is born at time 100 and then performs a jump at time 200 to time 50, ip #2
+   will be born again at time 100, and there will now be 2 of them (the newly
+   born ip #2 in addition to the one that jumped)  When the newly born ip #2
+   reaches the time it jumped (time point 200) it will cease to exist, it will
+   not perform another jump into the past, the original ip #2 however can
+   still jump.  If the new ip #2 performs a time jump earlier than when the
+   original jumped, the original will cease to exist.
+3. An ip travelling in the past can kill its parent prior to its own birth,
+   and will still exist.
+4. A time travelling ip will retain its memory, in other words, its stack
+   will be the same after the jump as before.  Also, unless the jump also
+   included a space jump, the location will be the same physical space
+   coodinates as when it jumped.
+5. An ip that perfroms a time jump without a space jump will execute the
+   next instruction as if it had never jumped.
+6. An ip that performs a space jump (with or without a time jump) will 
+   first execute the instruction it jumped to.
+
+When Multiple IPs Time Travel:
+  In order to decrease the work on the interpreter, it is not necessary for
+the interpreter to remember future events.  In other words when an ip travels
+back in time, everything occuring after the time point of destination need
+not recur if it does not occur in the further course of the program.  When
+IPs time travel, only those ips that are currently in funge space at the time
+of arrival (either normally or from time travelling) will exist.  Any ips
+that time travelled to a point later in time will not recur, unless the 
+original time travel for these ips recur. Here are two examples to illustrate 
+this point:
+Example 1:  Ip#1 travels back in time and arrives to time point 100, Ip#2
+travels back to point 150.  At point 150 the time travelled copies of both
+ips will exist.
+Example 2:  Ip#1 travels back in time and arrives to time point 150, Ip#2
+travels back to point 100.  At the point where ip#2 arrives, ip#1 has not
+yet arrived and therefore does not exist, it will also not exist when time
+point 150 arrives,  only when the original jump for Ip#1 occurs, will
+history again be rewritten.
+
+
+Tardis Operators Manual:
+1. Before attempting any jumps, the ip's tardis should be reset to clear
+   out any unwanted coordinates.
+2. There are three coordinate settings: Space coordinates, vector after jump,
+   and destination time.  Any coordinate that is not set will remain at the
+   last setting, or at default if the tardis is reset.
+3. Default coordinates are the current time, space, and vector.
+4. Absolute coordinates are based from time point 0, and space 0,0,0.
+5. Relative coordinates are based from the point the jump is actually made.
+6. All tardis coordinates are retained following a jump.
+7. The I command will set the tardis for the last source jump point.
+
+Stopping Time:
+An ip that issues a <S>top time command freezes the time counter.  All other
+ips will be frozen until a <C>ontinue time command is executed.  During the 
+time that time is stopped, only the ip that executed the S command will
+continue to run.  For the purposes of time travel, the time used while time
+is stopped does not actually exist, and therefore cannot be jumped to.  In
+other words everything the ip does is considered to have taken no time.  If
+an ip that stops time is terminated, time will be continued
+
+==========================================================================
+
+"TRGR" 0x54524752
+-----------------
+A-Y ( -- )              Activate trigger
+Z   (V -- )             Specify where trigger table is located
+
+When an IP executes a trigger a new IP is created that will then run
+concurrently with the rest of the IPs.  The new IP will be generated
+in the same from as t, but will contain the position associated with 
+the relevent entry in the trigger table
+
+The original IP is unaffected and continues to run normally after having
+executed the trigger.
+
+The trigger table contains executable code for the new IP, the code for
+A begins at the trigger table vector, B starts at the same X one line
+lower.
+
+Both the original IP and the new IP will have the uid of the other pushed
+onto its stack.
+
+==========================================================================
+
+"TERM" 0x5445524D
+-----------------
+C   ( -- )              Clear the screen
+D   ( n -- )            Move cursor down n lines
+G   (x y -- )           Put cursor at position x,y (home is 0,0)
+H   ( -- )              Move cursor to home
+L   ( -- )              Clear to end of line
+S   ( -- )              Clear to end of screen
+U   ( n -- )            Move cursor up n lines
+
+==========================================================================
+
+"TOYS" 0x544F5953
+-----------------
+A   (a n -- a(n) )      Pushes n copies of a on stack
+C   (Vd Vsz Vsrc -- )   Low order copy of funge space
+D   (n -- n)            Decrement tos
+E   (.. -- n)           Pops all stack values and pushes back the sum
+I   (n -- n)            Increment tos
+H   (a b -- v)          Shift left on +b, right on -b
+K   (Vd Vsz Vsrc -- )   High order copy of funge space
+L   ( -- n)             Get value to left of the ip's track
+M   (Vd Vsz Vsrc -- )   Low order move of funge space
+N   (n -- n)            Negate tos
+P   (.. -- n)           Pops all stack values and pushes back the product
+Q   (n -- )             Puts value in cell directly behind ip
+R   ( -- n)             Get value to right of the ip's track
+S   (v Vsz Vorg -- )    Fill area with value v
+U   ( -- )              Replaces itself with < > ^ v h or l
+V   (Vd Vsz Vsrc -- )   High order move of funge space
+X   ( -- )              Increments IP's delta X
+Y   ( -- )              Increments IP's delta Y
+Z   ( -- )              Increments IP's delta Z
+
+==========================================================================
+
+"TURT" 0x54555254
+-----------------
+A   ( -- h)             Query heading (0=east)
+B   (d -- )             Move backwards d pixles
+C   (rgb -- )           Set pen color to 24-bit RGB value
+D   (f -- )             Set display on (f=1) or off (f=0)
+E   ( -- p)             Query pen position down=1, up=0
+F   (d -- )             Move forward d pixels
+H   (h -- )             Set heading to h (in degrees, 0=east)
+I   ( -- )              Print drawing (not implemented yet)
+L   (d -- )             Turn left d degrees
+N   (rgb -- )           Clear with 24-bit RGB color
+P   (p -- )             Set pen position, 0=up, 1=down
+Q   ( -- x y)           Query pen position
+R   (d -- )             Turn right d degrees
+T   (x y -- )           Teleport pen to position
+U   ( -- minX minY maxX maxY)    Query bounds
+Note: The Cats-Eye specification for the TURT extension does not specify
+in which order values are placed on the stack when multiple values are
+present, so this may be implementation dependant.
+
+==========================================================================
+"UNIX" 0x554e4958
+A (id -- )                    - Set effective uid
+B (id -- )                    - Set effective gid
+C (0gnirts uid gid -- )       - Change owner of a file
+D ( -- 0gnirts)               - Get domain name
+E ( -- uid)                   - Get effective uid
+G ( -- gid)                   - Get real gid
+H ( -- id)                    - Get host id
+K (mask -- oldmask)           - Set umask
+M (0gnirts mode -- )          - Change file access modes
+N ( -- 0gnirts)               - Get host name
+P ( -- pid)                   - Get process id
+R ( -- gid)                   - Get effective gid
+S (id -- )                    - Set uid
+T (id -- )                    - Set gid
+U ( -- uid)                   - Get real uid
+
+All functions reflect on error
+
+C: if uid or gid is -1 that component will not be set
+
+==========================================================================
+"WIND" 0x57494E44
+-----------------
+B   (x1 y1 x2 y2 h -- ) Draw a box
+C   (h -- )             Close GC
+D   (h -- )             Drop (lower) Window
+E   (h -- )             Call event checker
+I   (Va e h -- )        Install event handler
+  e:   1 = Mouse Down
+       2 = Mouse Up
+       3 = Mouse Motion
+       4 = Key Pressed
+       5 = Expose
+       6 = Configuration
+K   (h -- )             Kill a window
+L   (x1 y1 x2 y2 h -- ) Draw a line
+M   (x y h -- )         Move a window
+O   (h -- )             Open GC
+P   (x y h -- )         Draw a point
+R   (h -- )             Raise Window
+S   (x y h -- )         resize a window
+T   (0gnirts x y h --)  Draw text in a window
+W   (x y w h -- h)      Open a window
+Note: Drawing commands: B, L, P, and T require an open GC
+
+==========================================================================
+
+Dynamic-Funge:
+--------------
+
+The original Mini-Funge of V1 is now history and has been replaced with a
+more powerful dynamic fingerprint module. The new dynamic fingerprint system
+allocates a whole VM to each dynamic fingerprint. All the capabilities of the
+Rc/Funge-98 engine are available to dynamic fingerprints, including the use
+of i,o,=, and t. Dynamic fingerprints may load their own fingerprints
+including other dynamic fingerprints.
+
+When a fingerprint is requested that is not built into the interpreter,
+RC/Funge will search for a file corresponding to the fingerprint. The
+filename is built from the ascii characters associated with the fingerprint
+and using an extension of 'fl'.
+
+example fingerprint: 0x524F4D41 would search for file ROMA.fl If the file
+is found it is loaded as the semantics for the overloaded functions. The
+file must be in the funge-lib file format.
+
+The VM created for a dynamic fingerprint runs in Trefunge mode and all
+overloaded instructions occupy planes within this funge-space. A will be
+located on plane 0, B on 1, C on 2 on up to Z on plane 25. Each overload
+instruction operates in Trefunge mode and can move between the planes.
+
+When a dynamic-Funge function is executed the stack of the calling IP is
+transferred to the IP within the dynamic-Funge VM, The stack transfer
+includes the entire stack-stack of the calling IP. When the last IP
+terminates within the dynamic-Funge VM its stack will be transferred back
+to the calling IP. Otherwise the IP created to run the dynamic-Funge
+function is created in the VMs default mode for IP creation with the
+exception that the location z coordinate is set to the plane of the
+requested function
+
+Default fingerprint
+-------------------
+When an IP is generated in a dynamic fingerprint command it is automatically
+loaded with a default fingerprint to allow it to work with the calling
+IP and environment of the caller. This fingerprint cannot be unloaded.
+
+A   ( -- )              Abort dynamic execution
+B   ( -- )              Move calling ip backwards one delta unit
+C   (Vsz Vdst Vsrc dir -- ) Copy funge-space
+D   (V -- )             Set delta of calling ip
+E   (.. -- n)           Push depth of stack
+F   ( -- )              Move calling ip forwards one delta unit
+G   (V -- n)            Get value stored in main funge-space cell
+I   (cmd -- )           Invoke a command on the calling IP
+K   (.. n -- .. n)      Forth Pick command
+L   (V -- )             Set location of calling ip
+M   (v -- )             Get modes from calling IP
+                           0x01 - Stringmode
+                           0x02 - Hovermode
+                           0x04 - Invertmode
+                           0x08 - Queuemode
+                           0x10 - Switchmode
+N   ( -- n)             Get next cell in path of calling IP
+O   ( .. n -- .. n)     Forth Roll command
+P   (n V -- )           Put value into main funge-space cell
+Q   ( -- Vloc Vdlt Vso) Query calling IP's location, delta and storage offset
+R   ( -- )              Reflect the delta of calling ip
+S   (V -- )             Change storage offset of calling ip
+T   ( -- )              Terminate all concurrent IPs except the current one
+X   ( -- )              Kill calling IP
+Y   ( -- )              Execute y in the calling IPs environment
+@   ( -- )              Terminate fingerprint IP
+
+A: This will terminate all IPs in the dynamic VM including the one executing
+   this instruction. This will have the affect of terminating the dynamic
+   call and control will be returned to the calling IP. The IP that executed
+   this command will transfer its stack back to the calling IP. In addition
+   the calling IP will be reversed.
+
+C: dir=0 for main->fingerprint otherwise reverse
+
+C: Vsrc is in vector format for source funge-space
+
+C: Vdst is in vector format for destination funge-space
+
+C: Vsz is in vector format for source funge-space
+
+C: Vsz is modifed to fit into destination funge-space if needed
+
+C: Both Vsrc and Vdst are affected by the relevent IPs storage offset.
+
+Other commands V is in vector format for calling IP's funge-space
+
+I: transfers the stack back to the calling IP before having it execute the
+   command. The stack is then transferred back to the dynamic-Funge IP.
+
+I: Dynamic-Funge VMs are NOT considerered re-entrant. Using I to execute a
+   command in the current running Dynamic VM could cause unpredictable
+   results. Commands from other dynamic VMs should work correctly.
+
+Q: The returned vectors are in the format for the calling IP's funge-space.
+
+T: This terminates the IPs in the dynamic VM and not the calling IP's VM.
+
+X: will kill the calling IP as well as the fingerprint IP that executed it.
+   Note: X will not kill other fingerprint IPs created within the fingerprint
+         with the t command. They will continue to run til completion.
+
+q executed in dynamic-Funge will cause the entire interpreter to quit, not
+just the VM of the fingerprint. 
+
+An entire dynamic-funge program executes in a single tick in comparison to
+other concurent funge ip pointers.
+
+
+funge-lib file format:
+----------------------
+  A funge-lib file contains the funge source code for commands which can be
+loaded into A-Z with the ( command.
+  Each command starts with a line beginning with = and an uppercase letter.
+All lines up til the next = line are the funge source lines for the function.
+  Example: Here is a funge-lib file describing Cat's-eye's ROMA extension:
+=I
+1@
+=V
+5@
+=X
+a@
+=L
+a5*@
+=C
+aa*@
+=D
+aa5**@
+=M
+aaa**@
+
+Debugger:
+---------
+back                    - Move ip backward by its delta
+del bp x [y [z]]        - Delete a breakpoint
+del trap c              - Delete a command trap
+drop                    - Drop top entry from stack
+fore                    - Move ip forward by its delta
+pop                     - Pop and display top of stack
+push n                  - Push a number onto the stack
+quit                    - Quit program
+run                     - Prevent single stepping on current ip
+set bp x [y [z]]        - Set a breakpoint
+set cell v x [y [z]]    - Set value in specified funge cell
+set ip delta x [y [z]]  - Set ip delta
+set ip pos x [y [z]]    - Set ip position
+set trap c              - Set a command breakpoint
+show bp                 - Show breakpoints
+show cell x [y [z]]     - Show value in specified funge cell
+show ip                 - Show ip information
+show ipdetails [n]      - Show detailed information about ip
+show ips                - Show information on all ips
+show fingers            - Show A-Z overloaded fingerprints
+show mapper             - Show instruction mappings
+show stack              - Show stack for current ip
+show stacks             - Show entries in all stacks
+show time               - Show current time point
+show traps              - Show command breakpoints
+steps n                 - Allow the current ip to step n instructions
+<enter>                 - Step one instruction
+  Note: Any single character command will be executed as the associated
+funge instruction (example, . will do the same as pop, with only a single
+keystroke.)
+
+Additional Notes:
+socks.f
+  The socks.f file shows both server side and client side socket connections.
+After the SOCK extension is loaded, a second thread is started.  The second
+thread creates a socket connection to act as the server side.  The server
+side creates and configures the socket and then writes a flag byte signalling
+to the first thread that the server is ready to listen.  The first thread
+continues as the client side connection.  It waits for a signal from the
+server thread, signalling that the server socket is ready.  The client thread
+then builds a socket and connects to the server thread through the socket.
+At this point a short message is transmitted by the server thread through the
+socket to the client thread.  The client thread prints the message and then
+closes the socket.
+
+For more information:
+---------------------
+For more information on funges, visit:
+  http://www.cats-eye.com/funge/
+
