@@ -77,7 +77,7 @@ void Unload_CFFI(VM* vm) {
   Unload_Semantic(vm,LetterNum('U'));
   Unload_Semantic(vm,LetterNum('W'));
   Unload_Semantic(vm,LetterNum('Y'));
-
+  free(pstack);
 }
 void ccall(VM * vm){
   /* Figure out Return Type */
