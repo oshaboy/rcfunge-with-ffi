@@ -324,7 +324,7 @@ $(PROJECT):  $(OBJECTS)
 ./bin/unix.o:		ext/unix.c funge.h
 	$(CC) $(DEFINES) -I. -c ext/unix.c -o ./bin/unix.o
 	
-./bin/cffi.o:		ext/unix.c funge.h
+./bin/cffi.o:		ext/cffi.c funge.h
 	$(CC) $(DEFINES) -I. -c ext/cffi.c -o ./bin/cffi.o 
 clean:
 	-rm -f ./bin/*.o
