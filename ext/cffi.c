@@ -28,6 +28,7 @@ void pushp(void * p){
   stack_ptr++;
   pstack=realloc(pstack,stack_ptr*sizeof(void *));
   pstack[stack_ptr-1]=p;
+  
 }
 void Load_CFFI(VM* vm,long int FingerPrint)
 {
@@ -76,6 +77,7 @@ void Unload_CFFI(VM* vm) {
   Unload_Semantic(vm,LetterNum('U'));
   Unload_Semantic(vm,LetterNum('W'));
   Unload_Semantic(vm,LetterNum('Y'));
+
 }
 void ccall(VM * vm){
   /* Figure out Return Type */
@@ -228,9 +230,7 @@ void Do_CFFI(VM* vm,int Cmd)
       {
         INT low=Pop(vm);
         INT high=Pop(vm);
-        uint64_t ptr=high;
-        ptr<<=32;
-        ptr|=low;
+        uint64_t ptr=(((uint64_t)(uint32_t)high)<<32)|((uint32_t)low);
         pushp((void*)ptr);
       }
       break;
