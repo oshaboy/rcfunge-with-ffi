@@ -126,7 +126,8 @@ void ccall(VM * vm){
         INT * p=arguments[i]=alloca(sizeof(INT *));
         *p=Pop(vm);
       }else if(argtypes[i]==&ffi_type_pointer){
-        arguments[i]=popp();
+        void ** p=arguments[i]=alloca(sizeof(void *));
+        *p=popp();
       } else {
         fprintf(stderr, "This isn't supposed to happen\n");
         exit(3);
