@@ -20,14 +20,14 @@
 
 void ** pstack;
 int stack_ptr;
-void * popp(){
+static inline void * popp(){
   register void * p = pstack[stack_ptr-1];
   stack_ptr--;
   pstack=realloc(pstack,stack_ptr*sizeof(void *));
   return p;
 
 }
-void pushp(void * p){
+static inline void pushp(void * p){
   stack_ptr++;
   pstack=realloc(pstack,stack_ptr*sizeof(void *));
   pstack[stack_ptr-1]=p;
