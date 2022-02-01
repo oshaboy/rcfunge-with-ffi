@@ -91,6 +91,7 @@ typedef unsigned char byte;
 #define EX_IPMD     11800
 #define EX_UNIX     11900
 #define EX_CFFI     13000
+#define EX_HQ9P     13100
 
 #define FINGER_NORM     0
 #define FINGER_ABS      1
@@ -507,6 +508,7 @@ extern void Load_TURT(VM* vm,long int FingerPrint);
 extern void Load_UNIX(VM* vm,long int FingerPrint);
 extern void Load_WIND(VM* vm,long int FingerPrint);
 extern void Load_CFFI(VM* vm,long int FingerPrint);
+extern void Load_HQ9P(VM* vm,long int FingerPrint);
 
 extern void Do_3DSP(VM* vm,int Cmd);
 extern void Do_ARRY(VM* vm,int Cmd);
@@ -570,6 +572,7 @@ extern void Do_TURT(VM* vm,int Cmd);
 extern void Do_UNIX(VM* vm,int Cmd);
 extern void Do_WIND(VM* vm,int Cmd);
 extern void Do_CFFI(VM* vm,int Cmd);
+extern void Do_HQ9P(VM* vm,int Cmd);
 
 extern void Unload_3DSP(VM* vm);
 extern void Unload_BASE(VM* vm);
@@ -633,5 +636,6 @@ extern void Unload_SGNE(VM* vm);
 extern void Unload_SGNL(VM* vm);
 extern void Unload_UNIX(VM* vm);
 extern void Unload_CFFI(VM* vm);
+extern void Unload_HQ9P(VM* vm);
 
 

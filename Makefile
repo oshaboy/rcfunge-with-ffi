@@ -6,7 +6,7 @@ CC=gcc
 #        -DTURT -DTOYS -DSTCK -DLONG -DSETS -DJSTR -DEXEC -DEMEM -DMACR -DFING\
 #        -DREXP -DMSGQ -DSMEM -DSMPH -DPNTR -DDATE -DMVRS -DARRY -DRAND -DFPRT \
 #	-DNCRS -DFOBJ -DSORT -DICAL -DSCKE -DIMTH -DBOOL -DSGNL -DFORK -DSGNE\
-#	-DIPMD -DUNIX -DCFFI\
+#	-DIPMD -DUNIX -DCFFI -DHQ9P\
 #	-D$(PLATFORM) -Wall
 
 DEFINES=-DBASE -DCPLI -DDIRF -DEVAR -DFILS -DFNGR -DFPDP -DFPSP -DFRTH -DFNUL\
@@ -15,7 +15,7 @@ DEFINES=-DBASE -DCPLI -DDIRF -DEVAR -DFILS -DFNGR -DFPDP -DFPSP -DFRTH -DFNUL\
         -DTURT -DTOYS -DSTCK -DLONG -DSETS -DJSTR -DEXEC -DEMEM -DMACR -DFING\
         -DREXP -DMSGQ -DSMEM -DSMPH -DPNTR -DDATE -DMVRS -DARRY -DRAND -DFPRT \
 	-DNCRS -DFOBJ -DSORT -DICAL -DSCKE -DIMTH -DBOOL -DFORK -DSGNE\
-	-DIPMD -DUNIX -DCFFI\
+	-DIPMD -DUNIX -DCFFI -DHQ9P\
 	-D$(PLATFORM) -Wall
 
 # solaris
@@ -106,7 +106,8 @@ OBJECTS=./bin/main.o\
         ./bin/smph.o\
         ./bin/unix.o\
 	./bin/mvrs.o\
-	./bin/cffi.o
+	./bin/cffi.o\
+	./bin/hq9+.o
 
 $(PROJECT):  $(OBJECTS)
 	$(CC) $(LIBPATH) $(OBJECTS) $(LIBS) -o $(PROJECT)
@@ -326,6 +327,8 @@ $(PROJECT):  $(OBJECTS)
 	
 ./bin/cffi.o:		ext/cffi.c funge.h
 	$(CC) $(DEFINES) -I. -c ext/cffi.c -o ./bin/cffi.o 
+./bin/hq9+.o:		ext/hq9+.c funge.h
+	$(CC) $(DEFINES) -I. -c ext/hq9+.c -o ./bin/hq9+.o 
 clean:
 	-rm -f ./bin/*.o
 	-rm -f $(PROJECT)

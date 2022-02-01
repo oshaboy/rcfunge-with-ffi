@@ -343,6 +343,12 @@ void Load_Fingerprint(VM* vm)
 #endif
 #ifdef CFFI
   else if (FingerPrint==0x43464649) Load_CFFI(vm,FingerPrint);
+<<<<<<< Updated upstream
+=======
+#endif 
+#ifdef HQ9P
+  else if (FingerPrint==0x4851392b) Load_HQ9P(vm,FingerPrint);
+>>>>>>> Stashed changes
 #endif 
 /* ********************************************************** */
 /* ***** No special module for NULL, just push reflects ***** */
@@ -773,6 +779,12 @@ int Unload_Spec(VM* vm,long int FingerPrint) {
     Unload_CFFI(vm);
     return 0;
     }
+#endif
+#ifdef HQ9P
+  if (FingerPrint==0x4851392b) {
+    Unload_HQ9P(vm);
+    return 0;
+    }
 #endif 
   return -1;
   }
@@ -1080,6 +1092,9 @@ void Do_Overload(VM* vm,INT func)
 #endif
 #ifdef CFFI
   else if (Cmd>=EX_CFFI && Cmd<=EX_CFFI+26) Do_CFFI(vm,Cmd);
+#endif
+#ifdef HQ9P
+  else if (Cmd>=EX_HQ9P && Cmd<=EX_HQ9P+26) Do_HQ9P(vm,Cmd);
 #endif
   else switch (Cmd) {
     case     1:Reflect(vm); break;                  /* default r */
