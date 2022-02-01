@@ -342,7 +342,7 @@ void Load_Fingerprint(VM* vm)
   else if (FingerPrint==0x54555254) Load_TURT(vm,FingerPrint);
 #endif
 #ifdef CFFI
-  else if (FingerPrint==0x43464649) Load_CFFI(vm,FingerPrint);
+  else if (SandBox!='Y' && FingerPrint==0x43464649) Load_CFFI(vm,FingerPrint);
 #endif 
 /* ********************************************************** */
 /* ***** No special module for NULL, just push reflects ***** */
