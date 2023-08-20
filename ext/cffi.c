@@ -56,6 +56,7 @@ void Load_CFFI(VM* vm,long int FingerPrint)
   vm->IPs[cip].Overloads[LetterNum('T')][vm->IPs[cip].NumOvers]=EX_CFFI+LetterNum('T');
   vm->IPs[cip].Overloads[LetterNum('U')][vm->IPs[cip].NumOvers]=EX_CFFI+LetterNum('U');
   vm->IPs[cip].Overloads[LetterNum('W')][vm->IPs[cip].NumOvers]=EX_CFFI+LetterNum('W');
+  vm->IPs[cip].Overloads[LetterNum('X')][vm->IPs[cip].NumOvers]=EX_CFFI+LetterNum('X');
   vm->IPs[cip].Overloads[LetterNum('Y')][vm->IPs[cip].NumOvers]=EX_CFFI+LetterNum('Y');
   
   pstack=malloc(sizeof(void*));
@@ -79,6 +80,7 @@ void Unload_CFFI(VM* vm) {
   Unload_Semantic(vm,LetterNum('T'));
   Unload_Semantic(vm,LetterNum('U'));
   Unload_Semantic(vm,LetterNum('W'));
+  Unload_Semantic(vm,LetterNum('X'));
   Unload_Semantic(vm,LetterNum('Y'));
   free(pstack);
 }
@@ -284,6 +286,14 @@ void Do_CFFI(VM* vm,int Cmd)
         INT index=Pop(vm);
         INT * arr=popp();
         Push(vm,arr[index]);
+      }
+      break;
+      case EX_CFFI+LetterNum('X'):
+      {
+        INT index=Pop(vm);
+        INT data=Pop(vm);
+        INT * arr=popp();
+        arr[index]=data;
       }
       break;
       case EX_CFFI+LetterNum('Y'):
