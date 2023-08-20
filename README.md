@@ -33,4 +33,5 @@ S - pop(f) a null terminated string and create a C String out of it then push(p)
 T - pop(p) char * , then pop(p) dynamic library pointer, then push(p) a symbol from the library, reflect on error. (dlsym)  
 U - pop(p) dynamic library pointer and close it, reflect on error. (dlclose)  
 W - pop(f) index, then pop(p) C array pointer then push(f) the word in the array at that index.   
+X - pop(f) index, then data then pop(p) C array pointer and insert the data into the array.   
 Y - swap two pointers on pointer stack.  
